@@ -1,0 +1,32 @@
+<%- include('../partials/header') %>
+<h3 class="mb-3">교수진</h3>
+<div class="row g-3 mb-4">
+  <% if (professors.length === 0) { %><p class="text-muted">등록된 교수진이 없어요.</p><% } %>
+  <% professors.forEach(function(p) { %>
+    <div class="col-md-4"><div class="card shadow-sm h-100"><div class="card-body">
+      <h5 class="mb-1"><%= p.name %></h5>
+      <div class="text-muted small mb-2"><%= p.field || '' %></div>
+      <div class="small">연구실: <%= p.office || '-' %></div>
+      <div class="small">이메일: <%= p.email || '-' %></div>
+      <% if (p.intro) { %><p class="small mt-2 mb-0"><%= p.intro %></p><% } %>
+      <% if (user && user.role === 'admin') { %>
+        <form class="mt-2" method="post" action="/dept/professors/<%= p.id %>/delete" onsubmit="return confirm('삭제할까요?')">
+          <button class="btn btn-sm btn-outline-danger">삭제</button></form>
+      <% } %>
+    </div></div></div>
+  <% }); %>
+</div>
+<% if (user && user.role === 'admin') { %>
+<div class="card shadow-sm"><div class="card-body">
+  <h6>교수 등록 (관리자)</h6>
+  <form class="row g-2" method="post" action="/dept/professors">
+    <div class="col-md-3"><input class="form-control" name="name" placeholder="이름" required></div>
+    <div class="col-md-3"><input class="form-control" name="field" placeholder="전공 분야"></div>
+    <div class="col-md-3"><input class="form-control" name="office" placeholder="연구실"></div>
+    <div class="col-md-3"><input class="form-control" name="email" placeholder="이메일"></div>
+    <div class="col-12"><input class="form-control" name="intro" placeholder="한 줄 소개"></div>
+    <div class="col-12"><button class="btn btn-primary">등록</button></div>
+  </form>
+</div></div>
+<% } %>
+<%- include('../partials/footer') %>

@@ -28,9 +28,11 @@ app.use(async (req, res, next) => {
   next();
 });
 
-app.get('/', (req, res) => res.render('index'));
+app.use('/', require('./routes/home'));
 app.use('/', require('./routes/auth'));
 app.use('/boards', require('./routes/boards'));
+app.use('/dept', require('./routes/dept'));
+app.use('/admin', require('./routes/admin'));
 
 app.listen(process.env.PORT || 3000, () => {
   console.log('서버 실행: http://localhost:' + (process.env.PORT || 3000));

@@ -1,0 +1,18 @@
+<%- include('../partials/header') %>
+<h3 class="mb-3">교육과정</h3>
+<div class="row g-3">
+  <% [
+    { y: '1학년', c: ['프로그래밍 기초', '컴퓨터 네트워크 개론', '웹 프로그래밍 기초'] },
+    { y: '2학년', c: ['웹개발실습', '네트워크보안', 'RF공학실습', '클라우드 컴퓨팅 실습'] },
+    { y: '3학년', c: ['캡스톤 디자인', '현장실습', '정보보안 심화'] }
+  ].forEach(function(g) { %>
+    <div class="col-md-4"><div class="card shadow-sm h-100">
+      <div class="card-header fw-bold"><%= g.y %></div>
+      <ul class="list-group list-group-flush">
+        <% g.c.forEach(function(name) { %><li class="list-group-item"><%= name %></li><% }); %>
+      </ul>
+    </div></div>
+  <% }); %>
+</div>
+<p class="text-muted small mt-3">※ 예시 데이터예요. 실제 교육과정에 맞게 수정해 주세요.</p>
+<%- include('../partials/footer') %>
