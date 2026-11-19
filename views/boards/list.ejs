@@ -1,0 +1,44 @@
+<%- include('../partials/header') %>
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3 class="mb-0"><%= board.name %></h3>
+  <% if (canWrite) { %><a class="btn btn-primary" href="/boards/<%= board.slug %>/new">글쓰기</a><% } %>
+</div>
+
+<form class="row g-2 mb-3" method="get">
+  <div class="col"><input class="form-control" name="q" value="<%= q %>" placeholder="제목 또는 내용 검색"></div>
+  <div class="col-auto"><button class="btn btn-outline-secondary">검색</button></div>
+</form>
+
+<div class="card shadow-sm">
+  <table class="table table-hover mb-0 align-middle">
+    <thead class="table-light"><tr>
+      <th style="width:70px">번호</th><th>제목</th><th style="width:110px">작성자</th>
+      <th style="width:110px">작성일</th><th style="width:70px">조회</th><th style="width:70px">좋아요</th>
+    </tr></thead>
+    <tbody>
+    <% if (posts.length === 0) { %>
+      <tr><td colspan="6" class="text-center text-muted py-4">게시글이 없어요.</td></tr>
+    <% } %>
+    <% posts.forEach(function(p) { %>
+      <tr class="<%= p.is_notice ? 'table-warning' : '' %>">
+        <td><%= p.is_notice ? '공지' : p.id %></td>
+        <td><a class="text-decoration-none" href="/boards/<%= board.slug %>/<%= p.id %>"><%= p.title %></a>
+          <% if (p.comment_count > 0) { %><span class="text-primary small">[<%= p.comment_count %>]</span><% } %></td>
+        <td><%= p.author %></td>
+        <td><%= new Date(p.created_at).toLocaleDateString('ko-KR') %></td>
+        <td><%= p.views %></td>
+        <td><%= p.like_count %></td>
+      </tr>
+    <% }); %>
+    </tbody>
+  </table>
+</div>
+
+<nav class="mt-3"><ul class="pagination justify-content-center">
+  <% for (let i = 1; i <= totalPages; i++) { %>
+    <li class="page-item <%= i === page ? 'active' : '' %>">
+      <a class="page-link" href="?page=<%= i %>&q=<%= encodeURIComponent(q) %>"><%= i %></a>
+    </li>
+  <% } %>
+</ul></nav>
+<%- include('../partials/footer') %>

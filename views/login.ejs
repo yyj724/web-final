@@ -1,0 +1,17 @@
+<%- include('partials/header') %>
+<div class="row justify-content-center">
+  <div class="col-md-5">
+    <div class="card shadow-sm"><div class="card-body p-4">
+      <h4 class="mb-3">로그인</h4>
+      <% if (error) { %><div class="alert alert-danger"><%= error %></div><% } %>
+      <form method="post" action="/login">
+        <div class="mb-3"><label class="form-label">학번</label>
+          <input class="form-control" name="student_no" required></div>
+        <div class="mb-3"><label class="form-label">비밀번호</label>
+          <input type="password" class="form-control" name="password" required></div>
+        <button class="btn btn-primary w-100">로그인</button>
+      </form>
+    </div></div>
+  </div>
+</div>
+<%- include('partials/footer') %>

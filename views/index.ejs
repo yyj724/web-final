@@ -1,12 +1,6 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head><meta charset="UTF-8"><title>기말 과제</title></head>
-<body>
-  <h1>DB 연결 테스트</h1>
-  <ul>
-    <% notes.forEach(function(n) { %>
-      <li><%= n.id %>. <%= n.title %></li>
-    <% }); %>
-  </ul>
-</body>
-</html>
+<%- include('partials/header') %>
+<div class="p-5 mb-4 bg-white rounded-3 shadow-sm">
+  <h1 class="display-6 fw-bold">정보통신공학과 카페</h1>
+  <p class="lead mb-0">공지, 소통, 장비 대여, 공강 매칭까지 학과 생활을 한곳에서.</p>
+</div>
+<%- include('partials/footer') %>

@@ -1,0 +1,28 @@
+<%- include('partials/header') %>
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card shadow-sm"><div class="card-body p-4">
+      <h4 class="mb-3">회원가입</h4>
+      <% if (error) { %><div class="alert alert-danger"><%= error %></div><% } %>
+      <form method="post" action="/register">
+        <div class="mb-3"><label class="form-label">학번</label>
+          <input class="form-control" name="student_no" value="<%= form.student_no || '' %>" required></div>
+        <div class="mb-3"><label class="form-label">이름</label>
+          <input class="form-control" name="name" value="<%= form.name || '' %>" required></div>
+        <div class="mb-3"><label class="form-label">이메일</label>
+          <input type="email" class="form-control" name="email" value="<%= form.email || '' %>" required></div>
+        <div class="mb-3"><label class="form-label">학년</label>
+          <select class="form-select" name="grade">
+            <option value="">선택 안 함</option>
+            <option value="1">1학년</option><option value="2">2학년</option><option value="3">3학년</option>
+          </select></div>
+        <div class="mb-3"><label class="form-label">비밀번호 (6자 이상)</label>
+          <input type="password" class="form-control" name="password" required></div>
+        <div class="mb-3"><label class="form-label">비밀번호 확인</label>
+          <input type="password" class="form-control" name="password2" required></div>
+        <button class="btn btn-primary w-100">가입하기</button>
+      </form>
+    </div></div>
+  </div>
+</div>
+<%- include('partials/footer') %>

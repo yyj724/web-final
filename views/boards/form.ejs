@@ -1,0 +1,15 @@
+<%- include('../partials/header') %>
+<h3 class="mb-3"><%= board.name %> · <%= post ? '글 수정' : '글쓰기' %></h3>
+<form method="post" action="<%= post ? `/boards/${board.slug}/${post.id}/edit` : `/boards/${board.slug}` %>">
+  <div class="mb-3"><input class="form-control" name="title" placeholder="제목" value="<%= post ? post.title : '' %>" required></div>
+  <div class="mb-3"><textarea class="form-control" name="content" rows="12" placeholder="내용" required><%= post ? post.content : '' %></textarea></div>
+  <% if (user.role === 'admin') { %>
+    <div class="form-check mb-3">
+      <input class="form-check-input" type="checkbox" name="is_notice" id="n" <%= post && post.is_notice ? 'checked' : '' %>>
+      <label class="form-check-label" for="n">공지로 상단 고정</label>
+    </div>
+  <% } %>
+  <button class="btn btn-primary">저장</button>
+  <a class="btn btn-outline-secondary" href="/boards/<%= board.slug %>">취소</a>
+</form>
+<%- include('../partials/footer') %>
