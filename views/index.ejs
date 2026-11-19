@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head><meta charset="UTF-8"><title>기말 과제</title></head>
+<body>
+  <h1>DB 연결 테스트</h1>
+  <ul>
+    <% notes.forEach(function(n) { %>
+      <li><%= n.id %>. <%= n.title %></li>
+    <% }); %>
+  </ul>
+</body>
+</html>
