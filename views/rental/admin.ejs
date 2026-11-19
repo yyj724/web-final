@@ -1,0 +1,109 @@
+<%- include('../partials/header') %>
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3 class="mb-0">장비 대여 관리</h3>
+  <a class="btn btn-outline-secondary" href="/rental">대여 화면으로</a>
+</div>
+
+<% if (error) { %><div class="alert alert-danger"><%= error %></div><% } %>
+<% const overdueCount = rented.filter(function(r) { return r.overdue_days > 0; }).length; %>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-4"><div class="card shadow-sm text-center"><div class="card-body">
+    <div class="text-muted small">승인 대기</div><div class="fs-2 fw-bold"><%= pending.length %></div></div></div></div>
+  <div class="col-md-4"><div class="card shadow-sm text-center"><div class="card-body">
+    <div class="text-muted small">대여중</div><div class="fs-2 fw-bold"><%= rented.length %></div></div></div></div>
+  <div class="col-md-4"><div class="card shadow-sm text-center border-danger"><div class="card-body">
+    <div class="text-muted small">연체</div><div class="fs-2 fw-bold text-danger"><%= overdueCount %></div></div></div></div>
+</div>
+
+<div class="card shadow-sm mb-4">
+  <div class="card-header fw-bold">승인 대기</div>
+  <table class="table mb-0 align-middle">
+    <thead class="table-light"><tr><th>신청자</th><th>장비</th><th>수량</th><th>현재 재고</th><th style="width:300px">처리</th></tr></thead>
+    <tbody>
+    <% if (pending.length === 0) { %><tr><td colspan="5" class="text-center text-muted py-3">대기 중인 신청이 없어요.</td></tr><% } %>
+    <% pending.forEach(function(r) { %>
+      <tr>
+        <td><%= r.user_name %> <span class="text-muted small">(<%= r.student_no %>)</span></td>
+        <td><%= r.equipment_name %></td><td><%= r.qty %></td><td><%= r.available_qty %></td>
+        <td>
+          <div class="d-flex gap-1">
+            <form class="d-flex gap-1" method="post" action="/rental/admin/<%= r.id %>/approve">
+              <select class="form-select form-select-sm" name="days" style="width:100px">
+                <option value="3">3일</option><option value="7" selected>7일</option><option value="14">14일</option>
+              </select>
+              <button class="btn btn-sm btn-success">승인</button>
+            </form>
+            <form method="post" action="/rental/admin/<%= r.id %>/reject">
+              <button class="btn btn-sm btn-outline-danger">거절</button></form>
+          </div>
+        </td>
+      </tr>
+    <% }); %>
+    </tbody>
+  </table>
+</div>
+
+<div class="card shadow-sm mb-4">
+  <div class="card-header fw-bold">대여중 · 연체 현황</div>
+  <table class="table mb-0 align-middle">
+    <thead class="table-light"><tr><th>대여자</th><th>장비</th><th>수량</th><th>반납 예정일</th><th>연체</th><th style="width:100px"></th></tr></thead>
+    <tbody>
+    <% if (rented.length === 0) { %><tr><td colspan="6" class="text-center text-muted py-3">대여중인 장비가 없어요.</td></tr><% } %>
+    <% rented.forEach(function(r) { %>
+      <tr class="<%= r.overdue_days > 0 ? 'table-danger' : '' %>">
+        <td><%= r.user_name %> <span class="text-muted small">(<%= r.student_no %>)</span></td>
+        <td><%= r.equipment_name %></td><td><%= r.qty %></td>
+        <td><%= new Date(r.due_date).toLocaleDateString('ko-KR') %></td>
+        <td><% if (r.overdue_days > 0) { %><span class="text-danger fw-bold">D+<%= r.overdue_days %></span><% } else { %>-<% } %></td>
+        <td><form method="post" action="/rental/admin/<%= r.id %>/return">
+          <button class="btn btn-sm btn-primary">반납 처리</button></form></td>
+      </tr>
+    <% }); %>
+    </tbody>
+  </table>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-5"><div class="card shadow-sm h-100">
+    <div class="card-header fw-bold">인기 장비 TOP 5</div>
+    <ul class="list-group list-group-flush">
+      <% if (ranking.length === 0) { %><li class="list-group-item text-muted">아직 대여 기록이 없어요.</li><% } %>
+      <% ranking.forEach(function(r, i) { %>
+        <li class="list-group-item d-flex justify-content-between">
+          <span><strong><%= i + 1 %>.</strong> <%= r.name %></span>
+          <span class="text-muted small"><%= r.times %>회 · <%= r.total_qty %>개</span>
+        </li>
+      <% }); %>
+    </ul>
+  </div></div>
+  <div class="col-md-7"><div class="card shadow-sm h-100">
+    <div class="card-header fw-bold">장비 등록</div>
+    <div class="card-body">
+      <form class="row g-2" method="post" action="/rental/admin/equipment">
+        <div class="col-md-6"><input class="form-control" name="name" placeholder="장비명" required></div>
+        <div class="col-md-6"><input class="form-control" name="category" placeholder="분류 (예: 측정 장비)" required></div>
+        <div class="col-md-4"><input type="number" class="form-control" name="total_qty" placeholder="수량" min="1" required></div>
+        <div class="col-md-8"><input class="form-control" name="description" placeholder="설명 (선택)"></div>
+        <div class="col-12"><button class="btn btn-primary">등록</button></div>
+      </form>
+    </div>
+  </div></div>
+</div>
+
+<div class="card shadow-sm">
+  <div class="card-header fw-bold">전체 장비</div>
+  <table class="table mb-0 align-middle">
+    <thead class="table-light"><tr><th>장비</th><th>분류</th><th>재고</th><th style="width:90px"></th></tr></thead>
+    <tbody>
+    <% equipment.forEach(function(e) { %>
+      <tr>
+        <td><%= e.name %></td><td><%= e.category %></td><td><%= e.available_qty %> / <%= e.total_qty %></td>
+        <td><form method="post" action="/rental/admin/equipment/<%= e.id %>/delete" onsubmit="return confirm('삭제할까요?')">
+          <button class="btn btn-sm btn-outline-danger">삭제</button></form></td>
+      </tr>
+    <% }); %>
+    </tbody>
+  </table>
+</div>
+<%- include('../partials/footer') %>

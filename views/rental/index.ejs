@@ -1,0 +1,75 @@
+<%- include('../partials/header') %>
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3 class="mb-0">실습 장비 대여</h3>
+  <% if (user && user.role === 'admin') { %><a class="btn btn-outline-primary" href="/rental/admin">대여 관리</a><% } %>
+</div>
+
+<% if (error) { %><div class="alert alert-danger"><%= error %></div><% } %>
+<% const overdueList = myRentals.filter(function(r) { return r.overdue_days > 0; }); %>
+<% if (overdueList.length > 0) { %>
+  <div class="alert alert-warning">연체 중인 장비가 <%= overdueList.length %>건 있어요. 반납하기 전까지 새 대여 신청이 제한돼요.</div>
+<% } %>
+
+<div class="card shadow-sm mb-4">
+  <div class="card-header fw-bold">대여 가능한 장비</div>
+  <table class="table mb-0 align-middle">
+    <thead class="table-light"><tr>
+      <th>장비</th><th>분류</th><th>설명</th><th style="width:100px">재고</th><th style="width:230px">대여 신청</th>
+    </tr></thead>
+    <tbody>
+    <% if (equipment.length === 0) { %><tr><td colspan="5" class="text-center text-muted py-4">등록된 장비가 없어요.</td></tr><% } %>
+    <% equipment.forEach(function(e) { %>
+      <tr>
+        <td class="fw-bold"><%= e.name %></td>
+        <td><span class="badge bg-secondary"><%= e.category %></span></td>
+        <td class="small text-muted"><%= e.description || '' %></td>
+        <td><span class="<%= e.available_qty === 0 ? 'text-danger fw-bold' : '' %>"><%= e.available_qty %> / <%= e.total_qty %></span></td>
+        <td>
+          <% if (!user) { %>
+            <a class="btn btn-sm btn-outline-primary" href="/login">로그인 후 신청</a>
+          <% } else if (e.available_qty === 0) { %>
+            <span class="text-muted small">재고 없음</span>
+          <% } else { %>
+            <form class="d-flex gap-1" method="post" action="/rental/request">
+              <input type="hidden" name="equipment_id" value="<%= e.id %>">
+              <input type="number" class="form-control form-control-sm" style="width:70px" name="qty" value="1" min="1" max="<%= e.available_qty %>">
+              <button class="btn btn-sm btn-primary">신청</button>
+            </form>
+          <% } %>
+        </td>
+      </tr>
+    <% }); %>
+    </tbody>
+  </table>
+</div>
+
+<% if (user) { %>
+<div class="card shadow-sm">
+  <div class="card-header fw-bold">내 대여 현황</div>
+  <table class="table mb-0 align-middle">
+    <thead class="table-light"><tr>
+      <th>장비</th><th>수량</th><th>상태</th><th>반납 예정일</th><th>연체</th><th style="width:90px"></th>
+    </tr></thead>
+    <tbody>
+    <% if (myRentals.length === 0) { %><tr><td colspan="6" class="text-center text-muted py-4">대여 내역이 없어요.</td></tr><% } %>
+    <% const label = { requested: ['승인 대기', 'warning'], rented: ['대여중', 'primary'], returned: ['반납 완료', 'success'], rejected: ['거절됨', 'secondary'] }; %>
+    <% myRentals.forEach(function(r) { %>
+      <tr class="<%= r.overdue_days > 0 ? 'table-danger' : '' %>">
+        <td><%= r.equipment_name %></td>
+        <td><%= r.qty %></td>
+        <td><span class="badge bg-<%= label[r.status][1] %>"><%= label[r.status][0] %></span></td>
+        <td><%= r.due_date ? new Date(r.due_date).toLocaleDateString('ko-KR') : '-' %></td>
+        <td><% if (r.overdue_days > 0) { %><span class="text-danger fw-bold">D+<%= r.overdue_days %></span><% } else { %>-<% } %></td>
+        <td>
+          <% if (r.status === 'requested') { %>
+            <form method="post" action="/rental/<%= r.id %>/cancel">
+              <button class="btn btn-sm btn-outline-secondary">취소</button></form>
+          <% } %>
+        </td>
+      </tr>
+    <% }); %>
+    </tbody>
+  </table>
+</div>
+<% } %>
+<%- include('../partials/footer') %>
