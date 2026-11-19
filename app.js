@@ -33,6 +33,7 @@ app.use('/', require('./routes/auth'));
 app.use('/boards', require('./routes/boards'));
 app.use('/dept', require('./routes/dept'));
 app.use('/rental', require('./routes/rental'));
+app.use('/timetable', require('./routes/timetable'));
 app.use('/admin', require('./routes/admin'));
 
 app.listen(process.env.PORT || 3000, () => {
